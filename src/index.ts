@@ -6,7 +6,7 @@ const inputField: HTMLElement = document.getElementById('input-addon');
 
 startBtn.addEventListener("click", (e: MouseEvent) => {
     fileResizer = new Resizer({
-        layoutWidth: 800,
+        layoutWidth: 1280,
         layoutHeight: 720,
         container: 'container'
     });

@@ -7,6 +7,14 @@ interface ResizerConfig {
     container: string
 }
 
+interface ImageParameters {
+    link: string,
+    width?: number,
+    height?: number,
+    x?: number,
+    y?: number
+}
+
 export class Resizer {
     readonly layoutWidth: number;
     readonly layoutHeight: number;
@@ -71,14 +79,14 @@ export class Resizer {
         group.add(anchor);
     }
 
-    public addImage(link: string): void {
+    public addImage(params: ImageParameters): void {
         let file = new Konva.Image({
             image: new Image(),
         });
         let fileGroup = new Konva.Group({
-            x: 0,
-            y: 0,
-            name: link,
+            x: (params['x'] || 0),
+            y: (params['y'] || 0),
+            name: params['link'],
             draggable: true,
             dragBoundFunc: (pos: Vector2d): Vector2d => {
                 let newX: number, newY: number;
@@ -109,7 +117,7 @@ export class Resizer {
 
         let imageObj: HTMLImageElement = new Image();
         imageObj.onload = () => {
-            file.image(imageObj).width(imageObj.width).height(imageObj.height);
+            file.image(imageObj).width(params['width'] || imageObj.width).height(params['height'] || imageObj.height);
 
             this.addAnchor(fileGroup, 0, 0, 'topLeft');
             this.addAnchor(fileGroup, file.width(), 0, 'topRight');
@@ -118,7 +126,7 @@ export class Resizer {
 
             this.layer.draw();
         };
-        imageObj.src = link;
+        imageObj.src = params['link'];
 
         file.on('mouseenter', () => {
             this.stage.container().style.cursor = 'move';
@@ -128,17 +136,17 @@ export class Resizer {
         });
     }
 
-    public addVideo(link: string): void {
+    public addVideo(params: ImageParameters): void {
         let video = document.createElement('video');
-        video.src = link;
+        video.src = params['link'];
 
         let image = new Konva.Image({
             image: <any>video,
         });
         let fileGroup = new Konva.Group({
-            x: 0,
-            y: 0,
-            name: link,
+            x: params['x'] || 0,
+            y: params['y'] || 0,
+            name: params['link'],
             draggable: true,
             dragBoundFunc: (pos: Vector2d): Vector2d => {
                 let newX: number, newY: number;
@@ -172,25 +180,25 @@ export class Resizer {
         }, this.layer);
 
         video.addEventListener('loadedmetadata', () => {
-            image.width(video.videoWidth);
-            image.height(video.videoHeight);
+            image.width(params['width'] || video.videoWidth);
+            image.height(params['height'] || video.videoHeight);
 
             this.addAnchor(fileGroup, 0, 0, 'topLeft');
-            this.addAnchor(fileGroup, video.videoWidth, 0, 'topRight');
-            this.addAnchor(fileGroup, video.videoWidth, video.videoHeight, 'bottomRight');
-            this.addAnchor(fileGroup, 0, video.videoHeight, 'bottomLeft');
+            this.addAnchor(fileGroup, image.width(), 0, 'topRight');
+            this.addAnchor(fileGroup, image.width(), image.height(), 'bottomRight');
+            this.addAnchor(fileGroup, 0, image.height(), 'bottomLeft');
 
             video.play();
             anim.start();
         });
     }
 
-    public addFile(link: string): void {
-        let fileExtension = link.match(/\.([^.]+)$/)[1];
+    public addFile(params: ImageParameters): void {
+        let fileExtension = params.link.match(/\.([^.]+)$/)[1];
         if (fileExtension === 'mp4') {
-            this.addVideo(link);
+            this.addVideo(params);
         } else {
-            this.addImage(link);
+            this.addImage(params);
         }
     }
 
@@ -222,6 +230,20 @@ export class Resizer {
         });
 
         return JSON.stringify({data: data}, undefined, 2);
+    }
+
+    public loadJSONData(jsonString: string): void {
+        this.clear();
+        let json: { [key: string]: any } = JSON.parse(jsonString);
+        for (let image of json.data) {
+            this.addFile({
+                link: image['image'],
+                width: image['width'],
+                height: image['height'],
+                x: image['x'],
+                y: image['y']
+            })
+        }
     }
 
     static update(activeAnchor: Shape): void {

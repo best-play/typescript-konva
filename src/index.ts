@@ -1,11 +1,21 @@
 import {Resizer} from "./resizer";
 
-let fileResizer: Resizer,
-    timer: number;
+let fileResizer: Resizer;
 const addBtn: HTMLElement = document.getElementById('button-add');
 const startBtn: HTMLElement = document.getElementById('button-clear');
 const inputField: HTMLElement = document.getElementById('input-addon');
 const showTraceBtn: HTMLElement = document.getElementById('show-trace');
+const loadTraceBtn: HTMLElement = document.getElementById('load-trace');
+const loadTrace: HTMLElement = document.getElementById('load-trace-json');
+
+let isJsonString = (str: string): boolean => {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+};
 
 fileResizer = new Resizer({
     layoutWidth: 1280,
@@ -18,9 +28,9 @@ startBtn.addEventListener("click", (e: MouseEvent) => {
 });
 
 addBtn.addEventListener("click", (e: MouseEvent) => {
-    fileResizer.addFile((<HTMLInputElement>inputField).value);
-    // fileResizer.addImage('https://pbs.twimg.com/profile_images/665505233859174400/kA0u43JI_400x400.jpg')
-    // fileResizer.addVideo('http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4')
+    fileResizer.addFile({
+        link: (<HTMLInputElement>inputField).value
+    })
 });
 
 showTraceBtn.addEventListener("click", (e: MouseEvent) => {
@@ -33,11 +43,24 @@ showTraceBtn.addEventListener("click", (e: MouseEvent) => {
     });
 
     collapseWindow.querySelector("#json").innerHTML = fileResizer.getJSONData()
+});
 
-    /*if (collapseWindow.classList.contains('show')) {
-        timer = setInterval(() =>
-            collapseWindow.querySelector("#json").innerHTML = fileResizer.getJSONData(), 500);
+loadTraceBtn.addEventListener("click", (e: MouseEvent) => {
+    let collapseWindow: HTMLElement = document.getElementById('collapseLoadTrace'),
+        spanWithText: NodeList = loadTraceBtn.querySelectorAll('span');
+
+    collapseWindow.classList.toggle("show");
+    spanWithText.forEach((span: HTMLElement) => {
+        span.classList.toggle("d-none");
+    });
+});
+
+loadTrace.addEventListener("click", (e: MouseEvent) => {
+    let collapseWindow: HTMLElement = document.getElementById('collapseLoadTrace');
+    let json = collapseWindow.querySelector('textarea').value;
+    if (isJsonString(json)) {
+        fileResizer.loadJSONData(json);
     } else {
-        clearTimeout(timer);
-    }*/
+        console.log('обработать ошибки');
+    }
 });

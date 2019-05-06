@@ -26,14 +26,26 @@
         <div id="container"></div>
 
         <p></p>
-        <button class="btn btn-primary" id="show-trace" type="button" data-toggle="collapse" data-target="#collapseTrace" aria-expanded="false" aria-controls="collapseTrace">
+        <button class="btn btn-primary" id="show-trace" type="button" data-toggle="collapse"
+                data-target="#collapseTrace" aria-expanded="false" aria-controls="collapseTrace">
             <span>Show trace</span>
-            <span class="d-none">Hide trace</span>
+            <span class="d-none">Close trace</span>
+        </button>
+        <button class="btn btn-primary" id="load-trace" type="button" data-toggle="collapse"
+                data-target="#collapseLoadTrace" aria-expanded="false" aria-controls="collapseLoadTrace">
+            <span>Load trace</span>
+            <span class="d-none">Close trace</span>
         </button>
         <p></p>
         <div class="collapse" id="collapseTrace">
             <div class="card card-body">
                 <pre id="json"></pre>
+            </div>
+        </div>
+        <div class="collapse" id="collapseLoadTrace">
+            <div class="card card-body">
+                <textarea name="" id="json-load" class="form-control" rows="5"></textarea>
+                <button class="btn btn-success text-center" id="load-trace-json">Load</button>
             </div>
         </div>
     </div>

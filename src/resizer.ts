@@ -79,8 +79,30 @@ export class Resizer {
             x: 0,
             y: 0,
             name: link,
-            draggable: true
+            draggable: true,
+            dragBoundFunc: (pos: Vector2d): Vector2d => {
+                let newX: number, newY: number;
+                if (pos.x < 0) {
+                    newX = 0;
+                } else if (pos.x > (this.layoutWidth - file.width())) {
+                    newX = (this.layoutWidth - file.width());
+                } else {
+                    newX = pos.x;
+                }
 
+                if (pos.y < 0) {
+                    newY = 0;
+                } else if (pos.y > (this.layoutHeight - file.height())) {
+                    newY = (this.layoutHeight - file.height());
+                } else {
+                    newY = pos.y;
+                }
+
+                return {
+                    x: newX,
+                    y: newY
+                };
+            }
         });
         this.layer.add(fileGroup);
         fileGroup.add(file);

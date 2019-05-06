@@ -17,12 +17,25 @@
                    aria-describedby="button-addon" id="input-addon"
                    value="https://www.google.com.ua/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon">GO</button>
+                <button class="btn btn-success" type="button" id="button-add">Add</button>
+                <button class="btn btn-danger" type="button" id="button-clear">Clear</button>
             </div>
         </div>
     </div>
     <div class="work">
         <div id="container"></div>
+
+        <p></p>
+        <button class="btn btn-primary" id="show-trace" type="button" data-toggle="collapse" data-target="#collapseTrace" aria-expanded="false" aria-controls="collapseTrace">
+            <span>Show trace</span>
+            <span class="d-none">Hide trace</span>
+        </button>
+        <p></p>
+        <div class="collapse" id="collapseTrace">
+            <div class="card card-body">
+                <pre id="json"></pre>
+            </div>
+        </div>
     </div>
 </div>
 

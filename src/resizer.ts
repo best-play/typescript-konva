@@ -1,5 +1,5 @@
-import * as Konva from 'konva';
-import {Group, Layer, Shape, Stage, Vector2d} from "konva";
+import * as Konva from "konva";
+import {Collection, Group, Layer, Shape, Stage, Vector2d} from "konva";
 
 interface ResizerConfig {
     layoutWidth?: number,
@@ -186,12 +186,42 @@ export class Resizer {
     }
 
     public addFile(link: string): void {
-        let fileExtension = link.match(/\.([^\.]+)$/)[1];
+        let fileExtension = link.match(/\.([^.]+)$/)[1];
         if (fileExtension === 'mp4') {
             this.addVideo(link);
         } else {
             this.addImage(link);
         }
+    }
+
+    public clear(): void {
+        let groups: Collection = this.layer.find('Group');
+        groups.each((group: Group) => {
+            group.destroy();
+        });
+        this.layer.draw()
+    }
+
+    public getJSONData(): string {
+        let data: object[] = [],
+            groups: Collection = this.layer.find('Group');
+
+        groups.each((group: Group) => {
+            let obj: { [key: string]: any } = {},
+                image: Collection = group.find('Image');
+
+            image.each((shape: Shape) => {
+                obj.x = group.x();
+                obj.y = group.y();
+                obj.width = shape.getAttr('width');
+                obj.height = shape.getAttr('height');
+                obj.image = shape.getAttr('image').src;
+            });
+
+            data.push(obj);
+        });
+
+        return JSON.stringify({data: data}, undefined, 2);
     }
 
     static update(activeAnchor: Shape): void {
